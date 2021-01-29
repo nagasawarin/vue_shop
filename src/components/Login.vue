@@ -71,21 +71,27 @@ export default {
       // element-UI的对整个表单进行校验的方法
       this.$refs.loginFormRef.validate(async (valid) => {
         if (!valid) return;
+        try {
+          // 调用请求接口获取登录信息
+          const { data: result } = await userInfoRequest(
+            "login",
+            this.loginForm
+          );
 
-        // 调用请求接口获取登录信息
-        const { data: result } = await userInfoRequest("login", this.loginForm);
-
-        if (result.meta.status == 200) {
-          /* 
+          if (result.meta.status == 200) {
+            /* 
             登陆成功后服务器会返回一个token，将此token保存到sessionStorage中
             客户退出登陆或者结束此次会话时，token会被删除
             访问其他页面时带有token则放行，否则提示让用户登陆
             有token = 已登陆；  没有token = 未登陆
           */
-          window.sessionStorage.setItem("token", result.data.token);
-          this.$router.push("/home");
-        } else {
-          alert("登录失败，请重试！");
+            window.sessionStorage.setItem("token", result.data.token);
+            this.$router.push("/home");
+          } else {
+            alert("登录失败，请重试！");
+          }
+        } catch (e) {
+          alert("错误" + e);
         }
       });
     },
