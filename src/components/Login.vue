@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { userInfoRequest } from "network/loginRequest";
+import { userInfoRequest } from "network/userRequest";
 export default {
   name: "login",
   data() {
@@ -56,7 +56,7 @@ export default {
           },
         ],
         password: [
-          { required: true, message: "请输入用户名", trigger: "blur" },
+          { required: true, message: "请输入密码", trigger: "blur" },
           { min: 6, message: "密码长度不能小于6位", trigger: "blur" },
         ],
       },
@@ -73,12 +73,9 @@ export default {
         if (!valid) return;
         try {
           // 调用请求接口获取登录信息
-          const { data: result } = await userInfoRequest(
-            "login",
-            this.loginForm
-          );
+          const { data: result } = await userInfoRequest(this.loginForm);
 
-          if (result.meta.status == 200) {
+          if (result.meta.status === 200) {
             /* 
             登陆成功后服务器会返回一个token，将此token保存到sessionStorage中
             客户退出登陆或者结束此次会话时，token会被删除
