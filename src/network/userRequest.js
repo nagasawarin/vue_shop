@@ -27,3 +27,16 @@ export function stateUpdateRequest(params) {
 export function userDeleteRequest(userId) {
   return instance.delete(`users/${userId}`);
 }
+
+// 修改用户信息
+export function userUpdateRequest(params) {
+  return instance.put(`users/${params.id}`, {
+    email: params.email,
+    mobile: params.mobile
+  });
+}
+
+// 根据ID查询用户信息
+export function getUserInfoById(userId) {
+  return instance.get('users/' + userId);
+}

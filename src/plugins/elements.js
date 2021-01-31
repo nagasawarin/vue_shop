@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import 'element-ui/lib/theme-chalk/index.css'
 import {
+  MessageBox,
   Button,
   Form,
   FormItem,
@@ -22,6 +23,7 @@ import {
   Pagination,
   Dialog
 } from 'element-ui';
+Vue.prototype.messageBox = MessageBox;
 Vue.use(Button);
 Vue.use(Form);
 Vue.use(FormItem);
