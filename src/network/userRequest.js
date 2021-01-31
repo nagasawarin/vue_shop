@@ -17,3 +17,13 @@ export function userListRequest(params) {
 export function addUserRequest(params) {
   return instance.post("users", params);
 }
+
+// 修改用户状态
+export function stateUpdateRequest(params) {
+  return instance.put(`users/${params.id}/state/${params.mg_state}`);
+}
+
+// 删除单个用户
+export function userDeleteRequest(userId) {
+  return instance.delete(`users/${userId}`);
+}

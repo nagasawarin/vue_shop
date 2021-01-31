@@ -91,7 +91,7 @@ export default {
         "icon-tongji",
       ],
       // 是否折叠左侧菜单
-      isCollapse: false,
+      isCollapse: true,
     };
   },
   methods: {

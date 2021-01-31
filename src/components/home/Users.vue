@@ -11,9 +11,22 @@
     <!-- 卡片视图区开始 -->
     <el-card>
       <div class="clearfix">
-        <el-input placeholder="请输入内容" class="input-with-select">
-          <el-button slot="append" icon="el-icon-search"></el-button>
+        <!-- 查找框开始 -->
+        <el-input
+          placeholder="请输入内容"
+          class="input-with-select"
+          v-model="queryInfo.query"
+          clearable
+          @clear="getUserList"
+        >
+          <el-button
+            slot="append"
+            icon="el-icon-search"
+            @click="getUserList"
+          ></el-button>
         </el-input>
+        <!-- 查找框结束 -->
+
         <!-- 添加用户功能开始 -->
         <el-button type="primary" @click="dialogFormVisible = true"
           >添加用户</el-button
@@ -22,6 +35,7 @@
           title="添加用户"
           :visible.sync="dialogFormVisible"
           width="40%"
+          @close="dialogClose"
         >
           <el-form
             ref="addFormRef"
@@ -34,17 +48,21 @@
               <el-input v-model="newUserInfo.username"></el-input>
             </el-form-item>
             <el-form-item label="密码" prop="password">
-              <el-input v-model="newUserInfo.password"></el-input>
+              <el-input
+                v-model="newUserInfo.password"
+                type="text"
+                onfocus="this.type='password'"
+              ></el-input>
             </el-form-item>
             <el-form-item label="邮箱" prop="email">
               <el-input v-model="newUserInfo.email"></el-input>
             </el-form-item>
-            <el-form-item label="手机">
-              <el-input v-model.number="newUserInfo.mobile" type="number"></el-input>
+            <el-form-item label="手机" prop="mobile">
+              <el-input v-model.number="newUserInfo.mobile"></el-input>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="cancelClick">取 消</el-button>
+            <el-button @click="dialogFormVisible = false">取 消</el-button>
             <el-button type="primary" @click="addNewUserClick">确 定</el-button>
           </div>
         </el-dialog>
@@ -52,7 +70,7 @@
       </div>
 
       <!-- 用户信息表格开始 -->
-      <el-table :data="userList" border stripe>
+      <el-table :data="userList" border stripe >
         <el-table-column type="index"></el-table-column>
         <el-table-column prop="username" label="姓名"></el-table-column>
         <el-table-column prop="email" label="邮箱"></el-table-column>
@@ -60,11 +78,14 @@
         <el-table-column prop="role_name" label="角色"></el-table-column>
         <el-table-column label="状态">
           <template slot-scope="scope">
-            <el-switch v-model="scope.row.mg_state"></el-switch>
+            <el-switch
+              v-model="scope.row.mg_state"
+              @change="stateChangeClick(scope.row)"
+            ></el-switch>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="173">
-          <template>
+          <template slot-scope="scope">
             <el-button
               size="small"
               type="primary"
@@ -74,6 +95,7 @@
               size="small"
               type="danger"
               icon="el-icon-delete"
+              @click="userDeleteClick(scope.row.id)"
             ></el-button>
             <el-tooltip content="分配角色" placement="top" :enterable="false">
               <el-button
@@ -105,10 +127,32 @@
 </template>
 
 <script>
-import { userListRequest, addUserRequest } from "network/userRequest";
+import {
+  userListRequest,
+  addUserRequest,
+  stateUpdateRequest,
+  userDeleteRequest,
+} from "network/userRequest";
+import request from "assets/content";
 export default {
   name: "",
   data() {
+    let emailRule = (rule, value, callback) => {
+      if (!value) return callback();
+      let emailReg = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+      if (!emailReg.test(value)) {
+        return callback(new Error("请输入正确的邮箱地址"));
+      }
+      callback();
+    };
+    let mobileRule = (rule, value, callback) => {
+      if (!value) return callback();
+      let mobileReg = /^(13[0-9]|14[5|7]|15[0|1|2|3|4|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/;
+      if (!mobileReg.test(value)) {
+        return callback(new Error("请输入正确的手机号码"));
+      }
+      callback();
+    };
     return {
       // 获取用户列表的参数对象
       queryInfo: {
@@ -120,6 +164,7 @@ export default {
       },
       userList: [],
       total: 0,
+      // 增加用户dialog控件是否打开
       dialogFormVisible: false,
       // 增加新用户的参数对象
       newUserInfo: {
@@ -143,22 +188,24 @@ export default {
           { required: true, message: "请输入密码", trigger: "blur" },
           { min: 6, message: "密码长度不能小于6位", trigger: "blur" },
         ],
-        email: [
-          {
-            type: "email",
-            message: "请输入正确的邮箱地址",
-            trigger: "blur",
-          },
-        ],
+        email: [{ required: false, validator: emailRule, trigger: "blur" }],
+        mobile: [{ validator: mobileRule, trigger: "blur" }],
       },
     };
   },
   methods: {
+    // 获取用户列表
     async getUserList() {
-      const { data: result } = await userListRequest(this.queryInfo);
-      if (result.meta.status !== 200) return alert(result.meta.msg);
-      this.userList = result.data.users;
-      this.total = result.data.total;
+      request({
+        request: userListRequest,
+        params: this.queryInfo,
+        success: (result) => {
+          this.userList = result.data.users;
+          this.total = result.data.total;
+          return;
+        },
+        successMsg: false,
+      });
     },
     // 监听pagesize改变的事件
     handleSizeChange(newSize) {
@@ -170,21 +217,43 @@ export default {
       this.queryInfo.pagenum = newPage;
       this.getUserList();
     },
-    cancelClick() {
-      this.dialogFormVisible = false;
+    // 监听dialog控件关闭事件
+    dialogClose() {
       this.$refs.addFormRef.resetFields();
     },
+    // 增加新用户按钮点击事件
     addNewUserClick() {
       this.$refs.addFormRef.validate(async (valid) => {
         if (!valid) return alert("请填写正确的信息");
-        const { data: result } = await addUserRequest(this.newUserInfo);
-        console.log(result);
-        if (result.meta.status === 201) {
-          this.cancelClick();
-          alert(result.meta.msg);
-        } else {
-          return alert(result.meta.msg);
-        }
+        request({
+          request: addUserRequest,
+          params: this.newUserInfo,
+          status: 201,
+          success: () => {
+            this.getUserList();
+            this.dialogFormVisible = false;
+          },
+        });
+      });
+    },
+    // 用户状态改变点击事件
+    stateChangeClick(userInfo) {
+      request({
+        request: stateUpdateRequest,
+        params: userInfo,
+        status: 200,
+        error: () => {
+          userInfo.mg_state = !userInfo.mg_state;
+        },
+      });
+    },
+    userDeleteClick(userId) {
+      request({
+        request: userDeleteRequest,
+        params: userId,
+        success: () => {
+          this.getUserList();
+        },
       });
     },
   },
