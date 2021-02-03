@@ -1,10 +1,15 @@
 <template>
-  <div><h3>数据报表</h3></div>
+  <div>
+    <breadcrumb></breadcrumb>
+  </div>
 </template>
 
 <script>
+import Breadcrumb from "components/common/Breadcrumb";
 export default {
-  name: "",
+  components:{
+    Breadcrumb
+  }
 };
 </script>
 

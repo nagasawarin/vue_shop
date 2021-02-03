@@ -21,7 +21,10 @@ import {
   Switch,
   Tooltip,
   Pagination,
-  Dialog
+  Dialog,
+  Tag,
+  Row,
+  Col
 } from 'element-ui';
 Vue.prototype.messageBox = MessageBox;
 Vue.use(Button);
@@ -44,3 +47,6 @@ Vue.use(Switch);
 Vue.use(Tooltip);
 Vue.use(Pagination);
 Vue.use(Dialog);
+Vue.use(Tag);
+Vue.use(Row);
+Vue.use(Col);

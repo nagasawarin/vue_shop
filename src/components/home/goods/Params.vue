@@ -1,12 +1,15 @@
 <template>
   <div>
-    <h3>分类参数</h3>
+    <breadcrumb></breadcrumb>
   </div>
 </template>
 
 <script>
+import Breadcrumb from "components/common/Breadcrumb";
 export default {
-  name: "",
+  components:{
+    Breadcrumb
+  }
 };
 </script>
 

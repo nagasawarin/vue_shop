@@ -1,11 +1,7 @@
 <template>
   <div>
     <!-- 面包屑导航开始 -->
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>用户管理</el-breadcrumb-item>
-      <el-breadcrumb-item>用户列表</el-breadcrumb-item>
-    </el-breadcrumb>
+    <breadcrumb></breadcrumb>
     <!-- 面包屑导航结束 -->
 
     <!-- 卡片视图区开始 -->
@@ -126,7 +122,11 @@
     <!-- 添加用户dialog框结束 -->
 
     <!-- 修改用户dialog框开始 -->
-    <el-dialog title="修改用户信息" :visible.sync="updateDialogVisible" @close="dialogClose">
+    <el-dialog
+      title="修改用户信息"
+      :visible.sync="updateDialogVisible"
+      @close="dialogClose"
+    >
       <el-form
         :model="updateUserInfo"
         label-width="60px"
@@ -163,8 +163,8 @@ import {
   getUserInfoById,
 } from "network/userRequest";
 import request from "assets/content";
+import Breadcrumb from "components/common/Breadcrumb";
 export default {
-  name: "",
   data() {
     let emailRule = (rule, value, callback) => {
       if (!value) return callback();
@@ -328,6 +328,9 @@ export default {
         },
       });
     },
+  },
+  components: {
+    Breadcrumb,
   },
   created() {
     this.getUserList();

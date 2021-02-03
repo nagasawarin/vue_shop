@@ -40,6 +40,7 @@
               :index="'/home/' + childItem.path"
               v-for="childItem in item.children"
               :key="childItem.id"
+              @click="pageChange(item.authName, childItem.authName)"
             >
               <template slot="title">
                 <i class="el-icon-menu"></i>
@@ -77,6 +78,7 @@
 
 <script>
 import { asideMenusRequest } from "network/leftAsideRequest";
+import request from "assets/content";
 export default {
   name: "home",
   data() {
@@ -95,14 +97,21 @@ export default {
     };
   },
   methods: {
+    pageChange(submenuName, menuitemName) {
+      this.$store.commit("menuNameChange", { submenuName, menuitemName });
+    },
     logOutClick() {
       window.sessionStorage.clear();
       this.$router.push("/login");
     },
-    async getMenuList() {
-      const { data: result } = await asideMenusRequest();
-      if (result.meta.status !== 200) return alert(result.meta.msg);
-      this.menuList = result.data;
+    getMenuList() {
+      request({
+        request: asideMenusRequest,
+        success: (data) => {
+          this.menuList = data;
+        },
+        successMsg: false,
+      });
     },
     toggleCollapse() {
       this.isCollapse = !this.isCollapse;
