@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <el-container class="container">
     <!-- 头部信息开始 -->
     <el-header>
       <div>
@@ -11,7 +11,7 @@
     <!-- 头部信息结束 -->
 
     <!-- 主页面部分开始 -->
-    <el-container>
+    <el-container class="main">
       <!-- 侧边栏开始 -->
       <el-aside :width="isCollapse ? '60px' : '200px'">
         <!-- 菜单列表 -->
@@ -25,11 +25,7 @@
           router
         >
           <!-- 一级菜单开始 -->
-          <el-submenu
-            :index="item.id.toString()"
-            v-for="(item, index) in menuList"
-            :key="item.id"
-          >
+          <el-submenu :index="item.id.toString()" v-for="(item, index) in menuList" :key="item.id">
             <template slot="title">
               <i class="iconfont" :class="menuIcon[index]"></i>
               <span>{{ item.authName }}</span>
@@ -78,7 +74,7 @@
 
 <script>
 import { asideMenusRequest } from "network/leftAsideRequest";
-import request from "assets/content";
+import { request } from "assets/content";
 export default {
   name: "home",
   data() {
@@ -124,8 +120,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.el-container {
+.container {
   height: 100%;
+}
+.main{
+  height:100%-60px;
 }
 .el-header {
   background-color: #1e1e1e;

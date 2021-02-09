@@ -5,24 +5,12 @@
         <img src="~assets/images/avatar.jpg" alt="默认头像" />
       </div>
 
-      <el-form
-        class="login_form"
-        :model="loginForm"
-        :rules="loginRules"
-        ref="loginFormRef"
-      >
+      <el-form class="login_form" :model="loginForm" :rules="loginRules" ref="loginFormRef">
         <el-form-item prop="username">
-          <el-input
-            prefix-icon="iconfont icon-yonghu"
-            v-model="loginForm.username"
-          ></el-input>
+          <el-input prefix-icon="iconfont icon-yonghu" v-model="loginForm.username"></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input
-            type="password"
-            prefix-icon="iconfont icon-mima"
-            v-model="loginForm.password"
-          ></el-input>
+          <el-input type="password" prefix-icon="iconfont icon-mima" v-model="loginForm.password"></el-input>
         </el-form-item>
         <el-form-item class="login_btns">
           <el-button type="primary" @click="loginClick">登陆</el-button>
@@ -34,6 +22,7 @@
 </template>
 
 <script>
+import { request } from "assets/content";
 import { userInfoRequest } from "network/userRequest";
 export default {
   name: "login",
@@ -72,21 +61,21 @@ export default {
       this.$refs.loginFormRef.validate(async (valid) => {
         if (!valid) return;
         try {
-          // 调用请求接口获取登录信息
-          const { data: result } = await userInfoRequest(this.loginForm);
-
-          if (result.meta.status === 200) {
-            /* 
-            登陆成功后服务器会返回一个token，将此token保存到sessionStorage中
-            客户退出登陆或者结束此次会话时，token会被删除
-            访问其他页面时带有token则放行，否则提示让用户登陆
-            有token = 已登陆；  没有token = 未登陆
-          */
-            window.sessionStorage.setItem("token", result.data.token);
-            this.$router.push("/home");
-          } else {
-            alert("登录失败，请重试！");
-          }
+          request({
+            request: userInfoRequest,
+            params: this.loginForm,
+            success: (data) => {
+              /* 
+                登陆成功后服务器会返回一个token，将此token保存到sessionStorage中
+                客户退出登陆或者结束此次会话时，token会被删除
+                访问其他页面时带有token则放行，否则提示让用户登陆
+                有token = 已登陆；  没有token = 未登陆
+              */
+              window.sessionStorage.setItem("token", data.token);
+              this.$router.push("/home");
+            },
+            successMsg: false,
+          });
         } catch (e) {
           alert("错误" + e);
         }

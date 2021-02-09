@@ -15,16 +15,10 @@
           clearable
           @clear="getUserList"
         >
-          <el-button
-            slot="append"
-            icon="el-icon-search"
-            @click="getUserList"
-          ></el-button>
+          <el-button slot="append" icon="el-icon-search" @click="getUserList"></el-button>
         </el-input>
         <!-- 查找框结束 -->
-        <el-button type="primary" @click="addUserDialogVisible = true"
-          >添加用户</el-button
-        >
+        <el-button type="primary" @click="addUserDialogVisible = true">添加用户</el-button>
       </div>
 
       <!-- 用户信息表格开始 -->
@@ -36,10 +30,7 @@
         <el-table-column prop="role_name" label="角色"></el-table-column>
         <el-table-column label="状态">
           <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.mg_state"
-              @change="stateChange(scope.row)"
-            ></el-switch>
+            <el-switch v-model="scope.row.mg_state" @change="stateChange(scope.row)"></el-switch>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="173">
@@ -61,6 +52,7 @@
                 size="small"
                 type="warning"
                 icon="el-icon-setting"
+                @click="userRoleDialog(scope.row)"
               ></el-button>
             </el-tooltip>
           </template>
@@ -77,19 +69,13 @@
         :page-size="queryInfo.pagesize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
-      >
-      </el-pagination>
+      ></el-pagination>
       <!-- 分页功能结束 -->
     </el-card>
     <!-- 卡片视图区结束 -->
 
     <!-- 添加用户dialog框开始 -->
-    <el-dialog
-      title="添加用户"
-      :visible.sync="addUserDialogVisible"
-      width="40%"
-      @close="dialogClose"
-    >
+    <el-dialog title="添加用户" :visible.sync="addUserDialogVisible" width="40%" @close="dialogClose">
       <el-form
         ref="addFormRef"
         :model="newUserInfo"
@@ -101,11 +87,7 @@
           <el-input v-model="newUserInfo.username"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input
-            v-model="newUserInfo.password"
-            type="text"
-            onfocus="this.type='password'"
-          ></el-input>
+          <el-input v-model="newUserInfo.password" type="text" onfocus="this.type='password'"></el-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="newUserInfo.email"></el-input>
@@ -122,26 +104,22 @@
     <!-- 添加用户dialog框结束 -->
 
     <!-- 修改用户dialog框开始 -->
-    <el-dialog
-      title="修改用户信息"
-      :visible.sync="updateDialogVisible"
-      @close="dialogClose"
-    >
+    <el-dialog title="修改用户信息" :visible.sync="updateDialogVisible" @close="dialogClose">
       <el-form
-        :model="updateUserInfo"
+        :model="userInfo"
         label-width="60px"
         ref="addFormRef"
         hide-required-asterisk
         :rules="loginRules"
       >
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="updateUserInfo.username" disabled></el-input>
+          <el-input v-model="userInfo.username" disabled></el-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
-          <el-input v-model="updateUserInfo.email"></el-input>
+          <el-input v-model="userInfo.email"></el-input>
         </el-form-item>
         <el-form-item label="手机" prop="mobile">
-          <el-input v-model.number="updateUserInfo.mobile"></el-input>
+          <el-input v-model.number="userInfo.mobile"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer">
@@ -150,6 +128,18 @@
       </div>
     </el-dialog>
     <!-- 修改用户dialog框结束 -->
+
+    <el-dialog title="分配用户角色" :visible.sync="roleDialogVisible" @close="roleDialogClose">
+      <p>当前的用户： {{ userInfo.username }}</p>
+      <p>当前的角色： {{ userInfo.role_name }}</p>
+      <el-select v-model="roleId" placeholder="请选择">
+        <el-option v-for="item in roleList" :key="item.id" :label="item.roleName" :value="item.id"></el-option>
+      </el-select>
+      <div slot="footer">
+        <el-button @click="roleDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="setUserRole">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -161,8 +151,9 @@ import {
   userDeleteRequest,
   userUpdateRequest,
   getUserInfoById,
+  setUserRoleRequest,
 } from "network/userRequest";
-import request from "assets/content";
+import { request, getRolesList } from "assets/content";
 import Breadcrumb from "components/common/Breadcrumb";
 export default {
   data() {
@@ -219,15 +210,27 @@ export default {
           { required: true, message: "请输入密码", trigger: "blur" },
           { min: 6, message: "密码长度不能小于6位", trigger: "blur" },
         ],
-        email: [{ required: false, validator: emailRule, trigger: "blur" }],
-        mobile: [{ validator: mobileRule, trigger: "blur" }],
+        email: [
+          {
+            required: false,
+            validator: emailRule,
+            message: "请输入正确的邮箱",
+            trigger: "blur",
+          },
+        ],
+        mobile: [
+          {
+            validator: mobileRule,
+            message: "请输入正确的手机号码",
+            trigger: "blur",
+          },
+        ],
       },
       // 修改用户绑定参数
-      updateUserInfo: {
-        username: "",
-        email: "",
-        mobile: "",
-      },
+      userInfo: {},
+      roleDialogVisible: false,
+      roleList: [],
+      roleId: "",
     };
   },
   methods: {
@@ -254,7 +257,7 @@ export default {
       this.queryInfo.pagenum = newPage;
       this.getUserList();
     },
-    // 监听增加用户dialog关闭事件
+    // 监听dialog关闭事件
     dialogClose() {
       this.$refs.addFormRef.resetFields();
     },
@@ -297,9 +300,11 @@ export default {
             params: userId,
             success: () => {
               this.getUserList().then((value) => {
-                if (this.total % this.queryInfo.pagesize == 0) {
+                if(true){
+                  if ((this.total / this.queryInfo.pagesize + 1) == this.queryInfo.pagenum) {
                   this.queryInfo.pagenum -= 1;
                   this.getUserList();
+                }
                 }
               });
             },
@@ -307,26 +312,59 @@ export default {
         })
         .catch(() => {});
     },
+    // 更新用户信息弹窗
     updateDialog(userId) {
       this.updateDialogVisible = true;
+      this.getUserInfo(userId);
+    },
+    // 根据id获取用户信息
+    getUserInfo(userId) {
       request({
         request: getUserInfoById,
         params: userId,
-        success: ({ id, username, email, mobile }) => {
-          this.updateUserInfo = { id, username, email, mobile };
+        success: (data) => {
+          this.userInfo = data;
         },
         successMsg: false,
       });
     },
+    // 更新用户信息
     userInfoUpdate() {
       this.updateDialogVisible = false;
       request({
         request: userUpdateRequest,
-        params: this.updateUserInfo,
+        params: this.userInfo,
         success: () => {
           this.getUserList();
         },
       });
+    },
+    getRoles() {
+      getRolesList((data) => {
+        this.roleList = data;
+      });
+    },
+    userRoleDialog(role) {
+      this.userInfo = role;
+      this.getRoles();
+      this.roleDialogVisible = true;
+    },
+    setUserRole() {
+      request({
+        request: setUserRoleRequest,
+        params: {
+          uid: this.userInfo.id,
+          rid: this.roleId,
+        },
+        success: () => {
+          this.getUserList();
+          this.roleDialogVisible = false;
+        },
+      });
+    },
+    roleDialogClose() {
+      this.roleId = "";
+      this.userInfo = [];
     },
   },
   components: {

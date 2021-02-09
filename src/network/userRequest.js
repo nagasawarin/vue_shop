@@ -40,3 +40,10 @@ export function userUpdateRequest(params) {
 export function getUserInfoById(userId) {
   return instance.get('users/' + userId);
 }
+
+// 用户分配角色
+export function setUserRoleRequest({ uid, rid }) {
+  return instance.put(`users/${uid}/role`, {
+    rid
+  })
+}
