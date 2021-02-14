@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="#app">
     <!-- 面包屑导航开始 -->
     <breadcrumb></breadcrumb>
     <!-- 面包屑导航结束 -->
@@ -129,6 +129,7 @@
     </el-dialog>
     <!-- 修改用户dialog框结束 -->
 
+    <!-- 用户分配dialog框开始 -->
     <el-dialog title="分配用户角色" :visible.sync="roleDialogVisible" @close="roleDialogClose">
       <p>当前的用户： {{ userInfo.username }}</p>
       <p>当前的角色： {{ userInfo.role_name }}</p>
@@ -140,6 +141,7 @@
         <el-button type="primary" @click="setUserRole">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 用户分配dialog框结束 -->
   </div>
 </template>
 
@@ -300,11 +302,12 @@ export default {
             params: userId,
             success: () => {
               this.getUserList().then((value) => {
-                if(true){
-                  if ((this.total / this.queryInfo.pagesize + 1) == this.queryInfo.pagenum) {
+                if (
+                  this.total / this.queryInfo.pagesize + 1 ==
+                  this.queryInfo.pagenum
+                ) {
                   this.queryInfo.pagenum -= 1;
                   this.getUserList();
-                }
                 }
               });
             },

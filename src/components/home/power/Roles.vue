@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="#app">
     <breadcrumb></breadcrumb>
 
     <!-- 卡片开始 -->
@@ -100,10 +100,10 @@
           :rules="rules"
         >
           <el-form-item label="角色名称" prop="roleName">
-            <el-input v-model="roleInfo.roleName"></el-input>
+            <el-input v-model="roleInfo.roleName" clearable></el-input>
           </el-form-item>
           <el-form-item label="角色描述">
-            <el-input v-model="roleInfo.roleDesc"></el-input>
+            <el-input v-model="roleInfo.roleDesc" clearable></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -128,10 +128,10 @@
           :rules="rules"
         >
           <el-form-item label="角色名称" prop="roleName">
-            <el-input v-model="updRoleInfo.roleName"></el-input>
+            <el-input v-model="updRoleInfo.roleName" clearable></el-input>
           </el-form-item>
           <el-form-item label="角色描述">
-            <el-input v-model="updRoleInfo.roleDesc"></el-input>
+            <el-input v-model="updRoleInfo.roleDesc" clearable></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">

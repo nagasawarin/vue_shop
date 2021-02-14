@@ -115,7 +115,7 @@ export default {
   },
   created() {
     this.getMenuList();
-  },
+  }
 };
 </script>
 
@@ -123,8 +123,8 @@ export default {
 .container {
   height: 100%;
 }
-.main{
-  height:100%-60px;
+.main {
+  height: 100%-60px;
 }
 .el-header {
   background-color: #1e1e1e;

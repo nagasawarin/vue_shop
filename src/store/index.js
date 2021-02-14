@@ -6,8 +6,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     menuName: {
-      submenuName: "用户管理",
-      menuitemName: "用户列表"
+      submenuName: "",
+      menuitemName: ""
     }
   },
   mutations: {
