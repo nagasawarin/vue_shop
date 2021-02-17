@@ -60,7 +60,7 @@
           </template>
         </el-table-column>
         <!-- 权限展开结束 -->
-        <el-table-column type="index"></el-table-column>
+        <el-table-column type="index" label="#"></el-table-column>
         <el-table-column prop="roleName" label="角色名称"></el-table-column>
         <el-table-column prop="roleDesc" label="角色描述"></el-table-column>
         <!-- 角色操作开始 -->
@@ -372,9 +372,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.buttonBox {
-  margin-bottom: 17px;
-}
 .el-tag {
   margin: 10px 0;
 }

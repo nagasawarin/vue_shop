@@ -65,7 +65,7 @@
         ref="addFormRef"
         :model="cateInfo"
         label-width="100px"
-        hide-required-asterisk
+        required
         :rules="rules"
       >
         <el-form-item label="分类名称：" prop="cat_name">
@@ -97,7 +97,7 @@
         ref="addFormRef"
         :model="updCateInfo"
         label-width="100px"
-        hide-required-asterisk
+        required
         :rules="rules"
       >
         <el-form-item label="分类名称：" prop="cat_name">
@@ -121,7 +121,7 @@ import {
   delCategories,
   updCategories,
 } from "network/goodsRequest";
-import { request } from "assets/content";
+import { request, getCate } from "assets/content";
 export default {
   data() {
     return {
@@ -189,15 +189,16 @@ export default {
   },
   methods: {
     getCateList() {
-      return request({
-        request: getCateList,
-        params: this.queryInfo,
-        success: (data) => {
-          this.catelist = data.result;
-          this.total = data.total;
-          return;
-        },
-        successMsg: false,
+      // return request({
+      //   request: getCateList,
+      //   params: this.queryInfo,
+      //   success: ,
+      //   successMsg: false,
+      // });
+      return getCate(this.queryInfo, (data) => {
+        this.catelist = data.result;
+        this.total = data.total;
+        return;
       });
     },
     // 监听pagesize改变的事件
