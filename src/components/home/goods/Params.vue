@@ -178,7 +178,6 @@
 </template>
 
 <script>
-import Breadcrumb from "components/common/Breadcrumb";
 import { request, getCate } from "assets/content";
 import {
   getCateAttrList,
@@ -259,8 +258,9 @@ export default {
           sel: this.activeName,
         },
         success: (data) => {
+          console.log(data);
           data.forEach((item) => {
-            item.attr_vals = item.attr_vals ? item.attr_vals.split(" ") : [];
+            item.attr_vals = item.attr_vals ? item.attr_vals.split(",") : [];
             item.inputVisible = false;
             item.newAttrVals = "";
           });
@@ -376,10 +376,7 @@ export default {
   },
   created() {
     this.getCatelist();
-  },
-  components: {
-    Breadcrumb,
-  },
+  }
 };
 </script>
 

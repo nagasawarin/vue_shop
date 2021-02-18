@@ -20,7 +20,6 @@
 </template>
 
 <script>
-import Breadcrumb from "components/common/Breadcrumb";
 import { request } from "assets/content";
 import { rightsListRequest } from "network/powerRequest";
 export default {
@@ -28,9 +27,6 @@ export default {
     return {
       rightsList: [],
     };
-  },
-  components: {
-    Breadcrumb,
   },
   methods: {
     getRightsList() {

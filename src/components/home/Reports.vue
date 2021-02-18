@@ -5,11 +5,8 @@
 </template>
 
 <script>
-import Breadcrumb from "components/common/Breadcrumb";
 export default {
-  components:{
-    Breadcrumb
-  }
+ 
 };
 </script>
 

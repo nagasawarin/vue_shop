@@ -164,7 +164,6 @@
 </template>
 
 <script>
-import Breadcrumb from "components/common/Breadcrumb";
 import { request, getRolesList } from "assets/content";
 import {
   roleRightsDelete,
@@ -361,9 +360,6 @@ export default {
     dialogClose() {
       this.$refs.addFormRef.resetFields();
     },
-  },
-  components: {
-    Breadcrumb,
   },
   created() {
     this.getRoles();

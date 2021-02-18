@@ -114,7 +114,6 @@
 </template>
 
 <script>
-import Breadcrumb from "components/common/Breadcrumb";
 import {
   getCateList,
   addCategories,
@@ -189,12 +188,6 @@ export default {
   },
   methods: {
     getCateList() {
-      // return request({
-      //   request: getCateList,
-      //   params: this.queryInfo,
-      //   success: ,
-      //   successMsg: false,
-      // });
       return getCate(this.queryInfo, (data) => {
         this.catelist = data.result;
         this.total = data.total;
@@ -294,9 +287,6 @@ export default {
         },
       });
     },
-  },
-  components: {
-    Breadcrumb,
   },
   created() {
     this.getCateList();

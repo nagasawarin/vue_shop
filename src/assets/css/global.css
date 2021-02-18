@@ -40,3 +40,20 @@
   margin-left: 10px;
   vertical-align: bottom;
 }
+
+.clearfix {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-items: start;
+  margin-bottom: 17px;
+}
+.clearfix > .el-button {
+  margin-left: 20px;
+}
+.el-step__title{
+  font-size: 13px;
+  line-height:33px;
+}
+.ql-editor{
+  min-height: 300px;
+}

@@ -156,7 +156,6 @@ import {
   setUserRoleRequest,
 } from "network/userRequest";
 import { request, getRolesList } from "assets/content";
-import Breadcrumb from "components/common/Breadcrumb";
 export default {
   data() {
     let emailRule = (rule, value, callback) => {
@@ -370,9 +369,6 @@ export default {
       this.userInfo = [];
     },
   },
-  components: {
-    Breadcrumb,
-  },
   created() {
     this.getUserList();
   },
@@ -380,13 +376,4 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.clearfix {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  justify-items: start;
-  margin-bottom: 17px;
-  & > .el-button {
-    margin-left: 20px;
-  }
-}
 </style>
