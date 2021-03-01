@@ -10,7 +10,7 @@ const Rights = () => import("components/home/power/Rights");
 const Goods = () => import("components/home/goods/Goods");
 const Params = () => import("components/home/goods/Params");
 const Categories = () => import("components/home/goods/Categories");
-const Orders = () => import("components/home/Orders");
+const Orders = () => import("components/home/orders/Orders");
 const Reports = () => import("components/home/Reports");
 const AddGoods = () => import("components/home/goods/AddGoods")
 
@@ -22,7 +22,7 @@ const routes = [
   {
     path: '/home',
     component: Home,
-    redirect: '/home/users',
+    redirect: '/home/welcome',
     children: [
       {
         path: 'welcome',

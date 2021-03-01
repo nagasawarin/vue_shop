@@ -33,7 +33,7 @@
             <el-switch v-model="scope.row.mg_state" @change="stateChange(scope.row)"></el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="173">
+        <el-table-column label="操作" width="180%">
           <template slot-scope="scope">
             <el-button
               size="small"
